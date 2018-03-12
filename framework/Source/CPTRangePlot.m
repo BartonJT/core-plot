@@ -1026,7 +1026,11 @@ typedef struct CGPointError CGPointError;
     }
 
     NSNumber *yValue;
-    CPTNumberArray *yValues       = @[[self cachedNumberForField:CPTRangePlotFieldY recordIndex:idx]];
+    // By storing the returned values to a variable first we are explicitly converting from a nullable
+    // to non-nullabel pointer. We are adoing this to silence the "Implicit conversion from nullable
+    // pointer to non-nullable pointer" warning/error.
+    NSNumber *fieldYValue = [self cachedNumberForField:CPTRangePlotFieldY recordIndex:idx];
+    CPTNumberArray *yValues       = @[fieldYValue];
     CPTNumberArray *yValuesSorted = [yValues sortedArrayUsingSelector:@selector(compare:)];
     if ( positiveDirection ) {
         yValue = yValuesSorted.lastObject;

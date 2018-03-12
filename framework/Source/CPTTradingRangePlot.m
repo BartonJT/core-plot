@@ -1223,10 +1223,20 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
 
     NSNumber *xValue = [self cachedNumberForField:CPTTradingRangePlotFieldX recordIndex:idx];
     NSNumber *yValue;
-    CPTNumberArray *yValues = @[[self cachedNumberForField:CPTTradingRangePlotFieldOpen recordIndex:idx],
-                                [self cachedNumberForField:CPTTradingRangePlotFieldClose recordIndex:idx],
-                                [self cachedNumberForField:CPTTradingRangePlotFieldHigh recordIndex:idx],
-                                [self cachedNumberForField:CPTTradingRangePlotFieldLow recordIndex:idx]];
+    
+    // By storing the returned values to a variable first we are explicitly converting from a nullable
+    // to non-nullabel pointer. We are adoing this to silence the "Implicit conversion from nullable
+    // pointer to non-nullable pointer" warning/error.
+    NSNumber *fieldOpenValue = [self cachedNumberForField:CPTTradingRangePlotFieldOpen recordIndex:idx];
+    NSNumber *fieldCloseValue = [self cachedNumberForField:CPTTradingRangePlotFieldClose recordIndex:idx];
+    NSNumber *fieldHighValue = [self cachedNumberForField:CPTTradingRangePlotFieldHigh recordIndex:idx];
+    NSNumber *fieldLowValue = [self cachedNumberForField:CPTTradingRangePlotFieldLow recordIndex:idx];
+    
+    CPTNumberArray *yValues = yValues = @[fieldOpenValue,
+                                          fieldCloseValue,
+                                          fieldHighValue,
+                                          fieldLowValue];
+    
     CPTNumberArray *yValuesSorted = [yValues sortedArrayUsingSelector:@selector(compare:)];
     if ( positiveDirection ) {
         yValue = yValuesSorted.lastObject;
